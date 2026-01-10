@@ -1,208 +1,187 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Show My IP, Date/Time, Hello, and Links</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding-top: 20px;
-            padding-bottom: 20px;
-        }
-        .container {
-            text-align: center;
-            background-color: #ffffff;
-            padding: 20px;
-            margin: 10px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
-        }
-        .button-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        .button-container a {
-            text-decoration: none;
-            color: #ffffff;
-            background-color: #007BFF;
-            padding: 10px;
-            border-radius: 5px;
-            text-align: center;
-            width: calc(50% - 10px); /* Adjust width for two buttons per row */
-            box-sizing: border-box;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Network Tools Dashboard</title>
+
+<style>
+:root {
+    --bg: #f4f6f8;
+    --card: #ffffff;
+    --primary: #007bff;
+    --secondary: #6c757d;
+    --text: #212529;
+    --radius: 12px;
+    --shadow: 0 8px 20px rgba(0,0,0,0.06);
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 16px;
+}
+
+.wrapper {
+    max-width: 480px;
+    margin: auto;
+    display: grid;
+    gap: 16px;
+}
+
+.card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 16px;
+    box-shadow: var(--shadow);
+}
+
+.card-title {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    color: var(--secondary);
+    margin-bottom: 12px;
+}
+
+.value {
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+}
+
+.time {
+    font-size: 15px;
+    text-align: center;
+    color: var(--secondary);
+}
+
+.buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.buttons a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    background: var(--primary);
+    color: #fff;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background .2s, transform .1s;
+}
+
+.buttons a:active {
+    transform: scale(0.97);
+}
+
+.buttons a:hover {
+    background: #005ecb;
+}
+
+.buttons.full a {
+    grid-column: span 2;
+}
+
+.footer {
+    text-align: center;
+    font-size: 12px;
+    color: #888;
+}
+</style>
 </head>
+
 <body>
-    <div class="container">
-       <!-- <h1>Your IP Address is:</h1> -->
-       <h1><p id="ipAddress">Fetching...</p><h1>
-    </div>
-<!--     <div class="container">
-        <h>demo84</h>
-    </div>
-        -->
-    <div class="container">
-      <!--  <h>Date and Time:</h>-->
-        <p id="dateTime">Fetching...</p>
+<div class="wrapper">
+
+    <!-- IP -->
+    <div class="card">
+        <div class="card-title">Your IP Address</div>
+        <div class="value" id="ipAddress">Fetching…</div>
     </div>
 
-<!--    <div class="container">
-        <h>Links to test DNS</h>
-    </div>
--->
-    <div class="container">
-<!--        <h1>Useful Links</h1>-->
-        <div class="button-container">
-                        <a href="https://intodns.com" target="_blank">IntoDNS</a>
-                        <a href="https://ping.pe/" target="_blank">Ping.pe</a>
-
-                        <a href="https://dnstools.ws/" target="_blank">DNSTools</a>
-                        <a href="https://dnsdumpster.com/" target="_blank">DNSDumpster</a>
-
-                        <a href="https://www.digwebinterface.com/" target="_blank">Dig Web</a>
-                        <a href="https://www.nslookup.io/" target="_blank">NSLookup.io</a>
-
-                        <a href="https://digtrace.net/traceroute" target="_blank">Online Traceroute</a>
-                        <a href="https://digtrace.net/http-curl" target="_blank">Online Ping.io</a>
-
-                        <a href="https://traceroute-online.com/" target="_blank">Traceroute Online</a>
-
-<!--# Traceroute Online - Trace and Map the Packets Path
-# 
---->
-
-        </div>
-    </div>
-            <div class="container">
-        <h>NsLookup.io</h>
+    <!-- Date / Time -->
+    <div class="card">
+        <div class="card-title">Current Time</div>
+        <div class="time" id="dateTime">Fetching…</div>
     </div>
 
-    <div class="container">
-<!--        <h1>Useful Links</h1>-->
-        <div class="button-container">
-                        <a href="https://www.nslookup.io/domains/liveshops.co.il/dns-records/#authoritative" target="_blank">liveshops.co.il</a>
-                        <a href="https://www.nslookup.io/domains/gadicpa.co.il/dns-records/" target="_blank">gadicpa.co.il </a>
-
-                        <a href="https://www.nslookup.io/domains/200.co.il/dns-records/#google" target="_blank">200.co.il</a>
-                        <a href="https://www.nslookup.io/domains/300.co.il/dns-records/" target="_blank">300.co.il</a>
-
-                        <a href="https://www.nslookup.io/domains/livejob.co.il/dns-records/#authoritative" target="_blank">livejob.co.il</a>
-                        <a href="https://www.nslookup.io/domains/livedist.co.il/dns-records/" target="_blank">livedist.co.il</a>
-
-        </div>
-    </div>
-            <div class="container">
-        <h>intoDNS.com and DIGwebinterface</h>
-    </div>
-
-    <div class="container">
-<!--        <h1>Useful Links</h1>-->
-        <div class="button-container">
-                        <a href="https://intodns.com/liveshops.co.il" target="_blank">liveshops.co.il</a>
-                        <a href="https://intodns.com/gadicpa.co.il" target="_blank">gadicpa.co.il</a>
-
-                        <a href="https://intodns.com/200.co.il" target="_blank">200.co.il</a>
-                        <a href="https://intodns.com/300.co.il" target="_blank">300.co.il</a>
-                        <a href="https://www.digwebinterface.com/?hostnames=liveshops.co.il%0D%0Agadicpa.co.il%0D%0A200.co.il%0D%0A300.co.il&type=&useresolver=9.9.9.10&ns=auth&nameservers=" target="_blank">DIG All</a>
-        </div>
-    </div>
-<!-- ######################################## -->
- <div class="container">
-        <h>PING Authoritative</h>
-    </div>
-
-    <div class="container">
-<!--        <h1>Useful Links</h1>-->
-        <div class="button-container">
-                        <a href="https://dig.ping.pe/200.co.il:A:park1.livedns.co.il" target="_blank">PARK1.</a>
-                        <a href="https://dig.ping.pe/200.co.il:A:park2.livedns.co.il" target="_blank">PARK2.</a>
-
-                        <a href="https://dig.ping.pe/300.co.il:A:linux1.livedns.co.il" target="_blank">linux1.</a>
-                        <a href="https://dig.ping.pe/300.co.il:A:linux2.livedns.co.il" target="_blank">linux2.</a>
-
-                        <a href="https://dig.ping.pe/liveshops.co.il:A:ns1.livedns.co.il" target="_blank">ns1.livedns.</a>
-                        <a href="https://dig.ping.pe/liveshops.co.il:A:ns2.livedns.co.il" target="_blank">ns2.livedns.</a>
-
-                        <a href="https://dig.ping.pe/gadicpa.co.il:A:ns1.livepress.co.il" target="_blank">ns1.livepress.</a>
-                        <a href="https://dig.ping.pe/gadicpa.co.il:A:ns2.livepress.co.il" target="_blank">ns2.livepress.</a>
-
-        </div>
-    </div>
-<!-- ######################################## -->
-                    <div class="container">
-        <h>dnschecker</h>
-    </div>
-
-    <div class="container">
-<!--        <h1>Useful Links</h1>-->
-        <div class="button-container">
-                        <a href="https://dnschecker.org/#NS/200.co.il" target="_blank">park1-park2</a>
-                        <a href="https://dnschecker.org/#NS/300.co.il" target="_blank">linux1-linux2</a>
-                        <a href="https://dnschecker.org/#NS/gadicpa.co.il" target="_blank">livepress</a>
-                        <a href="https://dnschecker.org/#NS/liveshops.co.il" target="_blank">ns1-ns2-ns3</a>
-        </div>
-    </div>
-<!-- ######################################## -->
-<div class="container">
-        <h>MY</h>
-    </div>
-
-    <div class="container">
-<!--        <h1>Useful Links</h1>-->
-        <div class="button-container">
-                        <a href="http://uptime-kuma-oracle.lvdns.com:3001/dashboard" target="_blank">Kuma oracle</a>
-                        <a href="http://uptime-kuma.lvdns.com:3001/dashboard" target="_blank">Kuma BE8 </a>
-                        <a href="http://kuma84.lvdns.com:3001/dashboard" target="_blank">Kuma 84</a>
-        </div>
-    </div>
-<!-- ######################################## -->
-<div class="container">
-        <h>Check-Host</h>
-    </div>
-
-    <div class="container">
-        <div class="button-container">
-                        <a href="https://check-host.net/" target="_blank">Check-Host</a>
-                        <a href="https://digtrace.net/traceroute/" target="_blank">Online Traceroute</a>            
+    <!-- General Tools -->
+    <div class="card">
+        <div class="card-title">DNS & Network Tools</div>
+        <div class="buttons">
+            <a href="https://intodns.com" target="_blank">IntoDNS</a>
+            <a href="https://ping.pe/" target="_blank">Ping.pe</a>
+            <a href="https://dnstools.ws/" target="_blank">DNSTools</a>
+            <a href="https://dnsdumpster.com/" target="_blank">DNSDumpster</a>
+            <a href="https://www.digwebinterface.com/" target="_blank">Dig Web</a>
+            <a href="https://www.nslookup.io/" target="_blank">NSLookup.io</a>
         </div>
     </div>
 
-           
-    <script>
-        // Fetch and display IP address
-        fetch('https://api.ipify.org?format=json')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('ipAddress').textContent = data.ip;
-            })
-            .catch(error => {
-                document.getElementById('ipAddress').textContent = 'Unable to fetch IP address';
-                console.error('Error fetching IP address:', error);
-            });
+    <!-- Nslookup -->
+    <div class="card">
+        <div class="card-title">NSLookup.io</div>
+        <div class="buttons">
+            <a href="https://www.nslookup.io/domains/liveshops.co.il/dns-records/" target="_blank">liveshops.co.il</a>
+            <a href="https://www.nslookup.io/domains/gadicpa.co.il/dns-records/" target="_blank">gadicpa.co.il</a>
+            <a href="https://www.nslookup.io/domains/200.co.il/dns-records/" target="_blank">200.co.il</a>
+            <a href="https://www.nslookup.io/domains/300.co.il/dns-records/" target="_blank">300.co.il</a>
+        </div>
+    </div>
 
-        // Function to get the current date and time
-        function updateDateTime() {
-            const now = new Date();
-            const formattedDateTime = now.toLocaleString();
-            document.getElementById('dateTime').textContent = formattedDateTime;
-        }
+    <!-- IntoDNS -->
+    <div class="card">
+        <div class="card-title">IntoDNS / DIG</div>
+        <div class="buttons">
+            <a href="https://intodns.com/liveshops.co.il" target="_blank">liveshops</a>
+            <a href="https://intodns.com/gadicpa.co.il" target="_blank">gadicpa</a>
+            <a href="https://intodns.com/200.co.il" target="_blank">200.co.il</a>
+            <a href="https://intodns.com/300.co.il" target="_blank">300.co.il</a>
+            <a href="https://www.digwebinterface.com/?hostnames=liveshops.co.il%0Agadicpa.co.il%0A200.co.il%0A300.co.il&ns=auth" target="_blank">DIG All</a>
+        </div>
+    </div>
 
-        // Initial call to display the date and time
-        updateDateTime();
+    <!-- Monitoring -->
+    <div class="card">
+        <div class="card-title">Monitoring</div>
+        <div class="buttons full">
+            <a href="http://uptime-kuma-oracle.lvdns.com:3001/dashboard" target="_blank">Uptime Kuma – Oracle</a>
+            <a href="http://uptime-kuma.lvdns.com:3001/dashboard" target="_blank">Uptime Kuma – BE8</a>
+            <a href="http://kuma84.lvdns.com:3001/dashboard" target="_blank">Uptime Kuma – 84</a>
+        </div>
+    </div>
 
-        // Update the date and time every second
-        setInterval(updateDateTime, 1000);
-    </script>
+    <div class="footer">
+        LiveDNS • Network Tools
+    </div>
+
+</div>
+
+<script>
+fetch('https://api.ipify.org?format=json')
+    .then(r => r.json())
+    .then(d => document.getElementById('ipAddress').textContent = d.ip)
+    .catch(() => document.getElementById('ipAddress').textContent = 'Unavailable');
+
+function updateDateTime() {
+    document.getElementById('dateTime').textContent =
+        new Date().toLocaleString();
+}
+updateDateTime();
+setInterval(updateDateTime, 1000);
+</script>
 </body>
 </html>
