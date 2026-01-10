@@ -3,22 +3,36 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Network Tools Dashboard</title>
+<title>LiveDNS Network Dashboard</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#007bff">
 
 <style>
+/* ===================== */
+/* THEME (AUTO DARK)     */
+/* ===================== */
 :root {
     --bg: #f4f6f8;
     --card: #ffffff;
-    --primary: #007bff;
-    --secondary: #6c757d;
     --text: #212529;
-    --radius: 12px;
-    --shadow: 0 8px 20px rgba(0,0,0,0.06);
+    --muted: #6c757d;
+    --primary: #007bff;
+    --shadow: 0 8px 20px rgba(0,0,0,.06);
 }
 
-* {
-    box-sizing: border-box;
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #0f1216;
+        --card: #161b22;
+        --text: #e6edf3;
+        --muted: #9aa4af;
+        --primary: #3399ff;
+        --shadow: none;
+    }
 }
+
+* { box-sizing: border-box; }
 
 body {
     margin: 0;
@@ -35,19 +49,48 @@ body {
     gap: 16px;
 }
 
+/* ===================== */
+/* HEADER / TABS         */
+/* ===================== */
+.tabs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    background: var(--card);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.tab {
+    padding: 14px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    color: var(--muted);
+}
+
+.tab.active {
+    background: var(--primary);
+    color: #fff;
+}
+
+/* ===================== */
+/* CARDS                 */
+/* ===================== */
 .card {
     background: var(--card);
-    border-radius: var(--radius);
+    border-radius: 14px;
     padding: 16px;
     box-shadow: var(--shadow);
 }
 
 .card-title {
-    font-size: 14px;
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 700;
     text-transform: uppercase;
     letter-spacing: .05em;
-    color: var(--secondary);
+    color: var(--muted);
     margin-bottom: 12px;
 }
 
@@ -58,11 +101,14 @@ body {
 }
 
 .time {
-    font-size: 15px;
+    font-size: 14px;
     text-align: center;
-    color: var(--secondary);
+    color: var(--muted);
 }
 
+/* ===================== */
+/* BUTTONS               */
+/* ===================== */
 .buttons {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -70,9 +116,6 @@ body {
 }
 
 .buttons a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     text-decoration: none;
     background: var(--primary);
     color: #fff;
@@ -80,25 +123,23 @@ body {
     border-radius: 10px;
     font-size: 14px;
     font-weight: 600;
-    transition: background .2s, transform .1s;
-}
-
-.buttons a:active {
-    transform: scale(0.97);
-}
-
-.buttons a:hover {
-    background: #005ecb;
+    text-align: center;
 }
 
 .buttons.full a {
     grid-column: span 2;
 }
 
+/* ===================== */
+/* TAB CONTENT            */
+/* ===================== */
+.section { display: none; }
+.section.active { display: grid; gap: 16px; }
+
 .footer {
     text-align: center;
     font-size: 12px;
-    color: #888;
+    color: var(--muted);
 }
 </style>
 </head>
@@ -108,80 +149,85 @@ body {
 
     <!-- IP -->
     <div class="card">
-        <div class="card-title">Your IP Address</div>
+        <div class="card-title">Your IP</div>
         <div class="value" id="ipAddress">Fetching…</div>
+        <div class="time" id="dateTime"></div>
     </div>
 
-    <!-- Date / Time -->
-    <div class="card">
-        <div class="card-title">Current Time</div>
-        <div class="time" id="dateTime">Fetching…</div>
+    <!-- TABS -->
+    <div class="tabs">
+        <div class="tab active" onclick="showTab('dns')">DNS</div>
+        <div class="tab" onclick="showTab('monitoring')">Monitoring</div>
+        <div class="tab" onclick="showTab('tools')">Tools</div>
     </div>
 
-    <!-- General Tools -->
-    <div class="card">
-        <div class="card-title">DNS & Network Tools</div>
-        <div class="buttons">
-            <a href="https://intodns.com" target="_blank">IntoDNS</a>
-            <a href="https://ping.pe/" target="_blank">Ping.pe</a>
-            <a href="https://dnstools.ws/" target="_blank">DNSTools</a>
-            <a href="https://dnsdumpster.com/" target="_blank">DNSDumpster</a>
-            <a href="https://www.digwebinterface.com/" target="_blank">Dig Web</a>
-            <a href="https://www.nslookup.io/" target="_blank">NSLookup.io</a>
+    <!-- DNS -->
+    <div id="dns" class="section active">
+        <div class="card">
+            <div class="card-title">DNS Tools</div>
+            <div class="buttons">
+                <a href="https://intodns.com" target="_blank">IntoDNS</a>
+                <a href="https://dnsdumpster.com" target="_blank">DNSDumpster</a>
+                <a href="https://www.nslookup.io" target="_blank">NSLookup</a>
+                <a href="https://www.digwebinterface.com" target="_blank">Dig Web</a>
+            </div>
         </div>
     </div>
 
-    <!-- Nslookup -->
-    <div class="card">
-        <div class="card-title">NSLookup.io</div>
-        <div class="buttons">
-            <a href="https://www.nslookup.io/domains/liveshops.co.il/dns-records/" target="_blank">liveshops.co.il</a>
-            <a href="https://www.nslookup.io/domains/gadicpa.co.il/dns-records/" target="_blank">gadicpa.co.il</a>
-            <a href="https://www.nslookup.io/domains/200.co.il/dns-records/" target="_blank">200.co.il</a>
-            <a href="https://www.nslookup.io/domains/300.co.il/dns-records/" target="_blank">300.co.il</a>
+    <!-- MONITORING -->
+    <div id="monitoring" class="section">
+        <div class="card">
+            <div class="card-title">Uptime Kuma</div>
+            <div class="buttons full">
+                <a href="http://uptime-kuma-oracle.lvdns.com:3001/dashboard" target="_blank">Oracle</a>
+                <a href="http://uptime-kuma.lvdns.com:3001/dashboard" target="_blank">BE8</a>
+                <a href="http://kuma84.lvdns.com:3001/dashboard" target="_blank">84</a>
+            </div>
         </div>
     </div>
 
-    <!-- IntoDNS -->
-    <div class="card">
-        <div class="card-title">IntoDNS / DIG</div>
-        <div class="buttons">
-            <a href="https://intodns.com/liveshops.co.il" target="_blank">liveshops</a>
-            <a href="https://intodns.com/gadicpa.co.il" target="_blank">gadicpa</a>
-            <a href="https://intodns.com/200.co.il" target="_blank">200.co.il</a>
-            <a href="https://intodns.com/300.co.il" target="_blank">300.co.il</a>
-            <a href="https://www.digwebinterface.com/?hostnames=liveshops.co.il%0Agadicpa.co.il%0A200.co.il%0A300.co.il&ns=auth" target="_blank">DIG All</a>
+    <!-- TOOLS -->
+    <div id="tools" class="section">
+        <div class="card">
+            <div class="card-title">Network Tools</div>
+            <div class="buttons">
+                <a href="https://ping.pe" target="_blank">Ping.pe</a>
+                <a href="https://check-host.net" target="_blank">Check-Host</a>
+                <a href="https://traceroute-online.com" target="_blank">Traceroute</a>
+                <a href="https://digtrace.net" target="_blank">DigTrace</a>
+            </div>
         </div>
     </div>
 
-    <!-- Monitoring -->
-    <div class="card">
-        <div class="card-title">Monitoring</div>
-        <div class="buttons full">
-            <a href="http://uptime-kuma-oracle.lvdns.com:3001/dashboard" target="_blank">Uptime Kuma – Oracle</a>
-            <a href="http://uptime-kuma.lvdns.com:3001/dashboard" target="_blank">Uptime Kuma – BE8</a>
-            <a href="http://kuma84.lvdns.com:3001/dashboard" target="_blank">Uptime Kuma – 84</a>
-        </div>
-    </div>
-
-    <div class="footer">
-        AL Nudnov • Network Tools
-    </div>
-
+    <div class="footer">LiveDNS • PWA Dashboard</div>
 </div>
 
 <script>
+/* TABS */
+function showTab(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.target.classList.add('active');
+}
+
+/* IP */
 fetch('https://api.ipify.org?format=json')
     .then(r => r.json())
-    .then(d => document.getElementById('ipAddress').textContent = d.ip)
-    .catch(() => document.getElementById('ipAddress').textContent = 'Unavailable');
+    .then(d => ipAddress.textContent = d.ip)
+    .catch(() => ipAddress.textContent = 'Unavailable');
 
-function updateDateTime() {
-    document.getElementById('dateTime').textContent =
-        new Date().toLocaleString();
+/* TIME */
+function updateTime() {
+    dateTime.textContent = new Date().toLocaleString();
 }
-updateDateTime();
-setInterval(updateDateTime, 1000);
+updateTime();
+setInterval(updateTime, 1000);
+
+/* PWA */
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js');
+}
 </script>
 </body>
 </html>
