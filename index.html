@@ -50,7 +50,7 @@ body {
 }
 
 /* ===================== */
-/* HEADER / TABS         */
+/* TABS                  */
 /* ===================== */
 .tabs {
     display: grid;
@@ -131,7 +131,23 @@ body {
 }
 
 /* ===================== */
-/* TAB CONTENT            */
+/* HEALTH BADGE          */
+/* ===================== */
+.health {
+    text-align: center;
+    font-weight: 700;
+    font-size: 16px;
+    padding: 10px;
+    border-radius: 12px;
+}
+
+.health.loading { background: #6c757d; color: #fff; }
+.health.ok { background: #1f883d; color: #fff; }
+.health.warning { background: #9e6a03; color: #fff; }
+.health.error { background: #cf222e; color: #fff; }
+
+/* ===================== */
+/* SECTIONS              */
 /* ===================== */
 .section { display: none; }
 .section.active { display: grid; gap: 16px; }
@@ -154,27 +170,88 @@ body {
         <div class="time" id="dateTime"></div>
     </div>
 
+    <!-- HEALTH -->
+    <div class="card">
+        <div class="card-title">System Health</div>
+        <div id="healthBadge" class="health loading">Checking…</div>
+    </div>
+
     <!-- TABS -->
     <div class="tabs">
-        <div class="tab active" onclick="showTab('dns')">DNS</div>
-        <div class="tab" onclick="showTab('monitoring')">Monitoring</div>
-        <div class="tab" onclick="showTab('tools')">Tools</div>
+        <div class="tab active" onclick="showTab('dns', this)">DNS</div>
+        <div class="tab" onclick="showTab('monitoring', this)">Monitoring</div>
+        <div class="tab" onclick="showTab('tools', this)">Tools</div>
     </div>
 
-    <!-- DNS -->
+    <!-- ================= DNS ================= -->
     <div id="dns" class="section active">
+
         <div class="card">
-            <div class="card-title">DNS Tools</div>
+            <div class="card-title">General DNS Tools</div>
             <div class="buttons">
                 <a href="https://intodns.com" target="_blank">IntoDNS</a>
-                <a href="https://dnsdumpster.com" target="_blank">DNSDumpster</a>
-                <a href="https://www.nslookup.io" target="_blank">NSLookup</a>
-                <a href="https://www.digwebinterface.com" target="_blank">Dig Web</a>
+                <a href="https://ping.pe/" target="_blank">Ping.pe</a>
+                <a href="https://dnstools.ws/" target="_blank">DNSTools</a>
+                <a href="https://dnsdumpster.com/" target="_blank">DNSDumpster</a>
+                <a href="https://www.digwebinterface.com/" target="_blank">Dig Web</a>
+                <a href="https://www.nslookup.io/" target="_blank">NSLookup.io</a>
+                <a href="https://traceroute-online.com/" target="_blank">Traceroute</a>
+                <a href="https://digtrace.net/traceroute" target="_blank">DigTrace</a>
             </div>
         </div>
+
+        <div class="card">
+            <div class="card-title">NSLookup.io — Domains</div>
+            <div class="buttons">
+                <a href="https://www.nslookup.io/domains/liveshops.co.il/dns-records/#authoritative" target="_blank">liveshops.co.il</a>
+                <a href="https://www.nslookup.io/domains/gadicpa.co.il/dns-records/" target="_blank">gadicpa.co.il</a>
+                <a href="https://www.nslookup.io/domains/200.co.il/dns-records/#google" target="_blank">200.co.il</a>
+                <a href="https://www.nslookup.io/domains/300.co.il/dns-records/" target="_blank">300.co.il</a>
+                <a href="https://www.nslookup.io/domains/livejob.co.il/dns-records/#authoritative" target="_blank">livejob.co.il</a>
+                <a href="https://www.nslookup.io/domains/livedist.co.il/dns-records/" target="_blank">livedist.co.il</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">IntoDNS & DIG</div>
+            <div class="buttons">
+                <a href="https://intodns.com/liveshops.co.il" target="_blank">liveshops.co.il</a>
+                <a href="https://intodns.com/gadicpa.co.il" target="_blank">gadicpa.co.il</a>
+                <a href="https://intodns.com/200.co.il" target="_blank">200.co.il</a>
+                <a href="https://intodns.com/300.co.il" target="_blank">300.co.il</a>
+                <a href="https://www.digwebinterface.com/?hostnames=liveshops.co.il%0Agadicpa.co.il%0A200.co.il%0A300.co.il&type=&useresolver=9.9.9.10&ns=auth" target="_blank">
+                    DIG All
+                </a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Authoritative NS (Ping / Dig)</div>
+            <div class="buttons">
+                <a href="https://dig.ping.pe/200.co.il:A:park1.livedns.co.il" target="_blank">park1.livedns</a>
+                <a href="https://dig.ping.pe/200.co.il:A:park2.livedns.co.il" target="_blank">park2.livedns</a>
+                <a href="https://dig.ping.pe/300.co.il:A:linux1.livedns.co.il" target="_blank">linux1.livedns</a>
+                <a href="https://dig.ping.pe/300.co.il:A:linux2.livedns.co.il" target="_blank">linux2.livedns</a>
+                <a href="https://dig.ping.pe/liveshops.co.il:A:ns1.livedns.co.il" target="_blank">ns1.livedns</a>
+                <a href="https://dig.ping.pe/liveshops.co.il:A:ns2.livedns.co.il" target="_blank">ns2.livedns</a>
+                <a href="https://dig.ping.pe/gadicpa.co.il:A:ns1.livepress.co.il" target="_blank">ns1.livepress</a>
+                <a href="https://dig.ping.pe/gadicpa.co.il:A:ns2.livepress.co.il" target="_blank">ns2.livepress</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">DNSChecker</div>
+            <div class="buttons">
+                <a href="https://dnschecker.org/#NS/200.co.il" target="_blank">200.co.il</a>
+                <a href="https://dnschecker.org/#NS/300.co.il" target="_blank">300.co.il</a>
+                <a href="https://dnschecker.org/#NS/gadicpa.co.il" target="_blank">gadicpa.co.il</a>
+                <a href="https://dnschecker.org/#NS/liveshops.co.il" target="_blank">liveshops.co.il</a>
+            </div>
+        </div>
+
     </div>
 
-    <!-- MONITORING -->
+    <!-- ============== MONITORING ============== -->
     <div id="monitoring" class="section">
         <div class="card">
             <div class="card-title">Uptime Kuma</div>
@@ -186,29 +263,28 @@ body {
         </div>
     </div>
 
-    <!-- TOOLS -->
+    <!-- ================= TOOLS ================= -->
     <div id="tools" class="section">
         <div class="card">
             <div class="card-title">Network Tools</div>
             <div class="buttons">
-                <a href="https://ping.pe" target="_blank">Ping.pe</a>
-                <a href="https://check-host.net" target="_blank">Check-Host</a>
-                <a href="https://traceroute-online.com" target="_blank">Traceroute</a>
-                <a href="https://digtrace.net" target="_blank">DigTrace</a>
+                <a href="https://check-host.net/" target="_blank">Check-Host</a>
+                <a href="https://ping.pe/" target="_blank">Ping</a>
+                <a href="https://traceroute-online.com/" target="_blank">Traceroute</a>
+                <a href="https://digtrace.net/http-curl" target="_blank">HTTP Curl</a>
             </div>
         </div>
     </div>
 
-    <div class="footer">AL • Dashboard</div>
+    <div class="footer">LiveDNS • Netlify • Cloudflare</div>
 </div>
 
 <script>
-/* TABS */
-function showTab(id) {
+function showTab(id, el) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.getElementById(id).classList.add('active');
-    event.target.classList.add('active');
+    el.classList.add('active');
 }
 
 /* IP */
@@ -224,9 +300,35 @@ function updateTime() {
 updateTime();
 setInterval(updateTime, 1000);
 
+/* HEALTH */
+const HEALTH_API = 'https://health.livedns.workers.dev';
+
+fetch(HEALTH_API)
+    .then(r => r.json())
+    .then(d => {
+        const el = document.getElementById('healthBadge');
+        el.classList.remove('loading');
+        if (d.status === 'ok') {
+            el.classList.add('ok');
+            el.textContent = '🟢 All Systems Operational';
+        } else if (d.status === 'warning') {
+            el.classList.add('warning');
+            el.textContent = '🟠 Partial Degradation';
+        } else {
+            el.classList.add('error');
+            el.textContent = '🔴 Service Disruption';
+        }
+    })
+    .catch(() => {
+        const el = document.getElementById('healthBadge');
+        el.classList.remove('loading');
+        el.classList.add('error');
+        el.textContent = '🔴 Health API Unreachable';
+    });
+
 /* PWA */
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js');
+    navigator.serviceWorker.register('/sw.js');
 }
 </script>
 </body>
