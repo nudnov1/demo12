@@ -54,7 +54,7 @@ body {
 /* ===================== */
 .tabs {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr); /* Изменено на 4 колонки */
     background: var(--card);
     border-radius: 14px;
     overflow: hidden;
@@ -62,10 +62,10 @@ body {
 }
 
 .tab {
-    padding: 14px;
+    padding: 14px 5px; /* Немного уменьшил отступы для 4 табов */
     text-align: center;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 13px; /* Уменьшил шрифт для мобильных */
     cursor: pointer;
     color: var(--muted);
 }
@@ -130,6 +130,9 @@ body {
     grid-column: span 2;
 }
 
+/* Специфический стиль для OneDrive папки */
+.btn-folder { background: #004578 !important; }
+
 /* ===================== */
 /* HEALTH BADGE          */
 /* ===================== */
@@ -156,6 +159,7 @@ body {
     text-align: center;
     font-size: 12px;
     color: var(--muted);
+    margin-top: 20px;
 }
 </style>
 </head>
@@ -163,27 +167,24 @@ body {
 <body>
 <div class="wrapper">
 
-    <!-- IP -->
     <div class="card">
         <div class="card-title">Your IP</div>
         <div class="value" id="ipAddress">Fetching…</div>
         <div class="time" id="dateTime"></div>
     </div>
 
-    <!-- HEALTH -->
     <div class="card">
         <div class="card-title">System Health</div>
         <div id="healthBadge" class="health loading">Checking…</div>
     </div>
 
-    <!-- TABS -->
     <div class="tabs">
         <div class="tab active" onclick="showTab('dns', this)">DNS</div>
         <div class="tab" onclick="showTab('monitoring', this)">Monitoring</div>
         <div class="tab" onclick="showTab('tools', this)">Tools</div>
+        <div class="tab" onclick="showTab('software', this)">Software</div>
     </div>
 
-    <!-- ================= DNS ================= -->
     <div id="dns" class="section active">
         <div class="card">
             <div class="card-title">My System Health</div>
@@ -191,7 +192,6 @@ body {
                 <a href="https://livedns-health.al-0e2.workers.dev/" target="_blank">Cloudflare → Workers & Pages</a>
                 <a href="https://lvadm.nudnov.net/" target="_blank">O-homepage</a>
             </div>
-            
         </div>
 
         <div class="card">
@@ -259,7 +259,6 @@ body {
 
     </div>
 
-    <!-- ============== MONITORING ============== -->
     <div id="monitoring" class="section">
         <div class="card">
             <div class="card-title">Uptime Kuma</div>
@@ -279,7 +278,6 @@ body {
         </div>
     </div>
 
-    <!-- ================= TOOLS ================= -->
     <div id="tools" class="section">
         <div class="card">
             <div class="card-title">Network Tools</div>
@@ -288,6 +286,31 @@ body {
                 <a href="https://ping.pe/" target="_blank">Ping</a>
                 <a href="https://traceroute-online.com/" target="_blank">Traceroute</a>
                 <a href="https://digtrace.net/http-curl" target="_blank">HTTP Curl</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="software" class="section">
+        <div class="card">
+            <div class="card-title">Remote Access</div>
+            <div class="buttons">
+                <a href="#" target="_blank">AnyDesk</a>
+                <a href="#" target="_blank">RustDesk</a>
+                <a href="#" target="_blank">TeamViewer</a>
+                <a href="#" target="_blank">Chrome Remote</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">OneDrive Repository</div>
+            <div class="buttons full">
+                <a href="ССЫЛКА_НА_ПАПКУ" target="_blank" class="btn-folder">📂 Open Full Repository</a>
+            </div>
+            <div class="buttons" style="margin-top: 10px;">
+                <a href="#" target="_blank">WinBox</a>
+                <a href="#" target="_blank">Putty</a>
+                <a href="#" target="_blank">Zabbix Agent</a>
+                <a href="#" target="_blank">Duo Mobile</a>
             </div>
         </div>
     </div>
