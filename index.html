@@ -54,7 +54,7 @@ body {
 /* ===================== */
 .tabs {
     display: grid;
-    grid-template-columns: repeat(4, 1fr); /* Изменено на 4 колонки */
+    grid-template-columns: repeat(4, 1fr);
     background: var(--card);
     border-radius: 14px;
     overflow: hidden;
@@ -62,10 +62,10 @@ body {
 }
 
 .tab {
-    padding: 14px 5px; /* Немного уменьшил отступы для 4 табов */
+    padding: 14px 5px;
     text-align: center;
     font-weight: 600;
-    font-size: 13px; /* Уменьшил шрифт для мобильных */
+    font-size: 13px;
     cursor: pointer;
     color: var(--muted);
 }
@@ -107,6 +107,39 @@ body {
 }
 
 /* ===================== */
+/* SEARCH BOX            */
+/* ===================== */
+.search-box {
+    display: flex;
+    gap: 8px;
+}
+
+.search-box input {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--muted);
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+}
+
+.search-box input:focus {
+    border-color: var(--primary);
+}
+
+.btn-search {
+    background: #ce4242 !important; /* Цвет в стиле AbuseIPDB */
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 0 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* ===================== */
 /* BUTTONS               */
 /* ===================== */
 .buttons {
@@ -130,7 +163,6 @@ body {
     grid-column: span 2;
 }
 
-/* Специфический стиль для OneDrive папки */
 .btn-folder { background: #004578 !important; }
 
 /* ===================== */
@@ -191,7 +223,6 @@ body {
             <div class="buttons">
                 <a href="https://livedns-health.al-0e2.workers.dev/" target="_blank">Cloudflare → Workers & Pages</a>
                 <a href="https://lvadm.nudnov.net/" target="_blank">O-homepage</a>
-
             </div>
         </div>
 
@@ -257,7 +288,6 @@ body {
                 <a href="https://dnschecker.org/#NS/liveshops.co.il" target="_blank">liveshops.co.il</a>
             </div>
         </div>
-
     </div>
 
     <div id="monitoring" class="section">
@@ -280,6 +310,14 @@ body {
     </div>
 
     <div id="tools" class="section">
+        <div class="card">
+            <div class="card-title">AbuseIPDB Check</div>
+            <form onsubmit="checkAbuseIP(event)" class="search-box">
+                <input type="text" id="abuseIpInput" placeholder="Enter IP address..." required>
+                <button type="submit" class="btn-search">Check</button>
+            </form>
+        </div>
+
         <div class="card">
             <div class="card-title">Network Tools</div>
             <div class="buttons">
@@ -325,6 +363,15 @@ function showTab(id, el) {
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
     document.getElementById(id).classList.add('active');
     el.classList.add('active');
+}
+
+/* AbuseIPDB Check Function */
+function checkAbuseIP(event) {
+    event.preventDefault();
+    const ip = document.getElementById('abuseIpInput').value.trim();
+    if (ip) {
+        window.open(`https://www.abuseipdb.com/check/${ip}`, '_blank');
+    }
 }
 
 /* IP */
