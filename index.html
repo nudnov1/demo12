@@ -1,421 +1,1098 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LiveDNS Network Dashboard</title>
+<title>AL NOC & Network Ops Center</title>
 
 <link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#007bff">
+<meta name="theme-color" content="#0f172a">
+
+<!-- Fonts & Icons -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
-/* ===================== */
-/* THEME (AUTO DARK)     */
-/* ===================== */
+/* ==========================================================================
+   DESIGN SYSTEM & VARIABLES (NOC Theme)
+   ========================================================================== */
 :root {
-    --bg: #f4f6f8;
-    --card: #ffffff;
-    --text: #212529;
-    --muted: #6c757d;
-    --primary: #007bff;
-    --shadow: 0 8px 20px rgba(0,0,0,.06);
+    --bg-dark: #090d16;
+    --card-bg: rgba(18, 24, 38, 0.75);
+    --card-border: rgba(255, 255, 255, 0.08);
+    --card-hover-border: rgba(56, 189, 248, 0.4);
+    
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    --text-dim: #64748b;
+
+    --accent-cyan: #38bdf8;
+    --accent-blue: #3b82f6;
+    --accent-indigo: #6366f1;
+    --accent-emerald: #10b981;
+    --accent-amber: #f59e0b;
+    --accent-rose: #f43f5e;
+    --accent-purple: #a855f7;
+
+    --glow-cyan: rgba(56, 189, 248, 0.25);
+    --glow-emerald: rgba(16, 185, 129, 0.25);
+
+    --radius-lg: 16px;
+    --radius-md: 10px;
+    --radius-sm: 6px;
+
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'JetBrains Mono', monospace;
+
+    --shadow-main: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --bg: #0f1216;
-        --card: #161b22;
-        --text: #e6edf3;
-        --muted: #9aa4af;
-        --primary: #3399ff;
-        --shadow: none;
-    }
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
 }
-
-* { box-sizing: border-box; }
 
 body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    padding: 16px;
+    background-color: var(--bg-dark);
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.08) 0px, transparent 50%),
+        linear-gradient(to bottom, rgba(15, 23, 42, 0.6), rgba(9, 13, 22, 0.95));
+    background-attachment: fixed;
+    color: var(--text-main);
+    font-family: var(--font-sans);
+    min-height: 100vh;
+    padding: 20px;
+    line-height: 1.5;
 }
 
-.wrapper {
-    max-width: 480px;
-    margin: auto;
+.container {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ==========================================================================
+   HEADER SECTION
+   ========================================================================== */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    padding: 16px 24px;
+    box-shadow: var(--shadow-main);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.brand-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(135deg, var(--accent-cyan), var(--accent-indigo));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    color: #fff;
+    box-shadow: 0 0 15px var(--glow-cyan);
+}
+
+.brand-title h1 {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    background: linear-gradient(to right, #ffffff, var(--text-muted));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.brand-title p {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+}
+
+.header-status {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.live-time {
+    text-align: right;
+    font-family: var(--font-mono);
+}
+
+.live-time .time-val {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent-cyan);
+}
+
+.live-time .date-val {
+    font-size: 11px;
+    color: var(--text-dim);
+}
+
+/* ==========================================================================
+   TOP STATS & MONITORING BAR
+   ========================================================================== */
+.stats-grid {
     display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 16px;
 }
 
-/* ===================== */
-/* TABS                  */
-/* ===================== */
-.tabs {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    background: var(--card);
-    border-radius: 14px;
-    overflow: hidden;
-    box-shadow: var(--shadow);
+.stat-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: all 0.25s ease;
 }
 
-.tab {
-    padding: 14px 5px;
-    text-align: center;
+.stat-card:hover {
+    border-color: var(--card-hover-border);
+    transform: translateY(-2px);
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.stat-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+    color: var(--text-dim);
+}
+
+.stat-value {
+    font-size: 20px;
+    font-weight: 700;
+    font-family: var(--font-mono);
+    color: var(--text-main);
+}
+
+.stat-detail {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.stat-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
     font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.badge-loading { background: rgba(148, 163, 184, 0.15); color: var(--text-muted); }
+.badge-ok { background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); border: 1px solid rgba(16, 185, 129, 0.3); }
+.badge-warning { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); border: 1px solid rgba(245, 158, 11, 0.3); }
+.badge-error { background: rgba(244, 63, 94, 0.15); color: var(--accent-rose); border: 1px solid rgba(244, 63, 94, 0.3); }
+
+/* Pulse animation */
+.pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: currentColor;
+    box-shadow: 0 0 8px currentColor;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.4; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* ==========================================================================
+   NAVIGATION TABS & SEARCH BAR
+   ========================================================================== */
+.controls-bar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+}
+
+.tabs-nav {
+    display: flex;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    padding: 4px;
+    border-radius: 12px;
+    gap: 4px;
+}
+
+.tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 10px 18px;
     font-size: 13px;
+    font-weight: 600;
+    border-radius: 8px;
     cursor: pointer;
-    color: var(--muted);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.tab.active {
-    background: var(--primary);
-    color: #fff;
+.tab-btn:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.05);
 }
 
-/* ===================== */
-/* CARDS                 */
-/* ===================== */
+.tab-btn.active {
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-indigo));
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.quick-filter {
+    position: relative;
+    min-width: 240px;
+}
+
+.quick-filter input {
+    width: 100%;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 10px 14px 10px 38px;
+    color: var(--text-main);
+    font-size: 13px;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.quick-filter input:focus {
+    border-color: var(--accent-cyan);
+    box-shadow: 0 0 0 3px var(--glow-cyan);
+}
+
+.quick-filter i {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-dim);
+    font-size: 13px;
+}
+
+/* ==========================================================================
+   TAB CONTENT SECTIONS
+   ========================================================================== */
+.section-content {
+    display: none;
+}
+
+.section-content.active {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 20px;
+}
+
 .card {
-    background: var(--card);
-    border-radius: 14px;
-    padding: 16px;
-    box-shadow: var(--shadow);
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: all 0.25s ease;
+    box-shadow: var(--shadow-main);
+}
+
+.card:hover {
+    border-color: var(--card-hover-border);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    padding-bottom: 12px;
 }
 
 .card-title {
     font-size: 13px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: .05em;
-    color: var(--muted);
-    margin-bottom: 12px;
+    letter-spacing: 0.05em;
+    color: var(--accent-cyan);
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
-.value {
-    font-size: 22px;
-    font-weight: 700;
-    text-align: center;
-}
-
-.time {
+.card-title i {
     font-size: 14px;
-    text-align: center;
-    color: var(--muted);
+    color: var(--text-muted);
 }
 
-/* ===================== */
-/* SEARCH BOX            */
-/* ===================== */
-.search-box {
+/* Button Grids */
+.btn-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
+}
+
+.btn-grid.full {
+    grid-template-columns: 1fr;
+}
+
+.link-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    color: var(--text-main);
+    text-decoration: none;
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.link-btn:hover {
+    background: rgba(56, 189, 248, 0.12);
+    border-color: var(--accent-cyan);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+.link-btn i {
+    font-size: 11px;
+    color: var(--text-dim);
+    transition: transform 0.2s ease;
+}
+
+.link-btn:hover i {
+    color: var(--accent-cyan);
+    transform: translateX(2px);
+}
+
+/* Custom Special Buttons */
+.btn-primary-action {
+    background: linear-gradient(135deg, #0284c7, #2563eb);
+    border: none;
+    color: #fff;
+}
+.btn-primary-action:hover {
+    background: linear-gradient(135deg, #0369a1, #1d4ed8);
+}
+
+.btn-sharepoint {
+    background: linear-gradient(135deg, #0078d4, #004578);
+    border: none;
+}
+
+.btn-abuse {
+    background: linear-gradient(135deg, #dc2626, #991b1b);
+    border: none;
+}
+
+/* Search Forms inside Cards */
+.search-form {
     display: flex;
     gap: 8px;
 }
 
-.search-box input {
+.search-form input, .tool-input {
     flex: 1;
-    padding: 12px;
-    border-radius: 10px;
-    border: 1px solid var(--muted);
-    background: var(--bg);
-    color: var(--text);
-    font-size: 14px;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: 10px 12px;
+    color: var(--text-main);
+    font-family: var(--font-mono);
+    font-size: 13px;
     outline: none;
 }
 
-.search-box input:focus {
-    border-color: var(--primary);
+.search-form input:focus, .tool-input:focus {
+    border-color: var(--accent-cyan);
 }
 
-.btn-search {
-    background: #ce4242 !important; /* Цвет в стиле AbuseIPDB */
-    color: white;
+.search-form button, .action-btn {
+    background: var(--accent-blue);
     border: none;
-    border-radius: 10px;
-    padding: 0 15px;
+    color: #fff;
+    border-radius: var(--radius-md);
+    padding: 0 16px;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
+    transition: background 0.2s ease;
 }
 
-/* ===================== */
-/* BUTTONS               */
-/* ===================== */
-.buttons {
+.search-form button:hover, .action-btn:hover {
+    background: #2563eb;
+}
+
+/* ==========================================================================
+   NETWORK TOOLS & CALCULATORS WIDGETS
+   ========================================================================== */
+.subnet-tool-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+}
+
+.subnet-res-item {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 8px 10px;
+    border-radius: var(--radius-sm);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.subnet-res-label {
+    color: var(--text-dim);
+    font-size: 10px;
+    text-transform: uppercase;
+}
+
+.subnet-res-val {
+    color: var(--accent-cyan);
+    font-weight: 600;
+    margin-top: 2px;
+    word-break: break-all;
+}
+
+/* CLI Copy Block */
+.cli-box {
+    background: rgba(9, 13, 22, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    padding: 10px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: #38bdf8;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.copy-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: none;
+    color: var(--text-muted);
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 11px;
+}
+
+.copy-btn:hover {
+    background: var(--accent-cyan);
+    color: #000;
+}
+
+/* ==========================================================================
+   FOOTER
+   ========================================================================== */
+footer {
+    margin-top: 10px;
+    text-align: center;
+    padding: 16px;
+    border-top: 1px solid var(--card-border);
+    color: var(--text-dim);
+    font-size: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
     gap: 10px;
 }
 
-.buttons a {
-    text-decoration: none;
-    background: var(--primary);
-    color: #fff;
-    padding: 12px;
-    border-radius: 10px;
-    font-size: 14px;
-    font-weight: 600;
-    text-align: center;
+footer .footer-tags span {
+    background: rgba(255, 255, 255, 0.04);
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 11px;
 }
 
-.buttons.full a {
-    grid-column: span 2;
-}
-
-.btn-folder { background: #004578 !important; }
-
-/* ===================== */
-/* HEALTH BADGE          */
-/* ===================== */
-.health {
-    text-align: center;
-    font-weight: 700;
-    font-size: 16px;
-    padding: 10px;
-    border-radius: 12px;
-}
-
-.health.loading { background: #6c757d; color: #fff; }
-.health.ok { background: #1f883d; color: #fff; }
-.health.warning { background: #9e6a03; color: #fff; }
-.health.error { background: #cf222e; color: #fff; }
-
-/* ===================== */
-/* SECTIONS              */
-/* ===================== */
-.section { display: none; }
-.section.active { display: grid; gap: 16px; }
-
-.footer {
-    text-align: center;
-    font-size: 12px;
-    color: var(--muted);
-    margin-top: 20px;
+/* Responsive adjust */
+@media (max-width: 768px) {
+    body { padding: 12px; }
+    header { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .header-status { width: 100%; justify-content: space-between; }
+    .controls-bar { flex-direction: column; align-items: stretch; }
+    .tabs-nav { overflow-x: auto; }
+    .section-content.active { grid-template-columns: 1fr; }
+    footer { flex-direction: column; text-align: center; }
 }
 </style>
 </head>
 
 <body>
-<div class="wrapper">
+<div class="container">
 
-    <div class="card">
-        <div class="card-title">Your IP</div>
-        <div class="value" id="ipAddress">Fetching…</div>
-        <div class="time" id="dateTime"></div>
-    </div>
-
-    <div class="card">
-        <div class="card-title">System Health</div>
-        <div id="healthBadge" class="health loading">Checking…</div>
-    </div>
-
-    <div class="tabs">
-        <div class="tab active" onclick="showTab('dns', this)">DNS</div>
-        <div class="tab" onclick="showTab('monitoring', this)">Monitoring</div>
-        <div class="tab" onclick="showTab('tools', this)">Tools</div>
-        <div class="tab" onclick="showTab('software', this)">Software</div>
-    </div>
-
-    <div id="dns" class="section active">
-        <div class="card">
-            <div class="card-title">My System Health</div>
-            <div class="buttons">
-                <a href="https://livedns-health.al-0e2.workers.dev/" target="_blank">Cloudflare → Workers & Pages</a>
-                <a href="https://lvadm.nudnov.net/" target="_blank">O-homepage</a>
+    <!-- ==========================================================================
+         HEADER
+         ========================================================================== -->
+    <header>
+        <div class="brand">
+            <div class="brand-icon">
+                <i class="fa-solid fa-network-wired"></i>
+            </div>
+            <div class="brand-title">
+                <h1>AL Network Console</h1>
+                <p>SysOps & Infrastructure Control Center</p>
             </div>
         </div>
-
-        <div class="card">
-            <div class="card-title">General DNS Tools</div>
-            <div class="buttons">
-                <a href="https://intodns.com" target="_blank">IntoDNS</a>
-                <a href="https://ping.pe/" target="_blank">Ping.pe</a>
-                <a href="https://dnstools.ws/" target="_blank">DNSTools</a>
-                <a href="https://dnsdumpster.com/" target="_blank">DNSDumpster</a>
-                <a href="https://www.digwebinterface.com/" target="_blank">Dig Web</a>
-                <a href="https://www.nslookup.io/" target="_blank">NSLookup.io</a>
-                <a href="https://traceroute-online.com/" target="_blank">Traceroute</a>
-                <a href="https://digtrace.net/traceroute" target="_blank">DigTrace</a>
+        <div class="header-status">
+            <div class="live-time">
+                <div class="time-val" id="clockTime">00:00:00</div>
+                <div class="date-val" id="clockDate">Loading date...</div>
             </div>
         </div>
+    </header>
 
-        <div class="card">
-            <div class="card-title">NSLookup.io — Domains</div>
-            <div class="buttons">
-                <a href="https://www.nslookup.io/domains/liveshops.co.il/dns-records/#authoritative" target="_blank">liveshops.co.il</a>
-                <a href="https://www.nslookup.io/domains/gadicpa.co.il/dns-records/" target="_blank">gadicpa.co.il</a>
-                <a href="https://www.nslookup.io/domains/200.co.il/dns-records/#google" target="_blank">200.co.il</a>
-                <a href="https://www.nslookup.io/domains/300.co.il/dns-records/" target="_blank">300.co.il</a>
-                <a href="https://www.nslookup.io/domains/livejob.co.il/dns-records/#authoritative" target="_blank">livejob.co.il</a>
-                <a href="https://www.nslookup.io/domains/livedist.co.il/dns-records/" target="_blank">livedist.co.il</a>
+    <!-- ==========================================================================
+         SYSTEM STATS / MONITORING BAR
+         ========================================================================== -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-info">
+                <span class="stat-label">Your Client IP</span>
+                <span class="stat-value" id="clientIp">Fetching...</span>
+                <span class="stat-detail" id="clientGeo">Detecting Location / ISP...</span>
             </div>
+            <i class="fa-solid fa-globe" style="font-size: 24px; color: var(--accent-cyan); opacity: 0.6;"></i>
         </div>
 
+        <div class="stat-card">
+            <div class="stat-info">
+                <span class="stat-label">Worker Health API</span>
+                <div style="margin-top: 4px;">
+                    <span id="healthBadge" class="stat-badge badge-loading">
+                        <span class="pulse-dot"></span> Checking Status...
+                    </span>
+                </div>
+            </div>
+            <i class="fa-solid fa-heart-pulse" style="font-size: 24px; color: var(--accent-emerald); opacity: 0.6;"></i>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+         NAVIGATION TABS & SEARCH
+         ========================================================================== -->
+    <div class="controls-bar">
+        <div class="tabs-nav">
+            <button class="tab-btn active" onclick="switchTab('dns', this)">
+                <i class="fa-solid fa-dns"></i> DNS & Records
+            </button>
+            <button class="tab-btn" onclick="switchTab('monitoring', this)">
+                <i class="fa-solid fa-chart-line"></i> Monitoring & NOC
+            </button>
+            <button class="tab-btn" onclick="switchTab('tools', this)">
+                <i class="fa-solid fa-screwdriver-wrench"></i> Net Tools & Calc
+            </button>
+            <button class="tab-btn" onclick="switchTab('software', this)">
+                <i class="fa-solid fa-box-archive"></i> Repository & Software
+            </button>
+        </div>
+
+        <div class="quick-filter">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="linkSearch" placeholder="Quick filter links & tools..." onkeyup="filterLinks()">
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+         TAB 1: DNS & RECORDS
+         ========================================================================== -->
+    <div id="dns" class="section-content active">
+        
         <div class="card">
-            <div class="card-title">IntoDNS & DIG</div>
-            <div class="buttons">
-                <a href="https://intodns.com/liveshops.co.il" target="_blank">liveshops.co.il</a>
-                <a href="https://intodns.com/gadicpa.co.il" target="_blank">gadicpa.co.il</a>
-                <a href="https://intodns.com/200.co.il" target="_blank">200.co.il</a>
-                <a href="https://intodns.com/300.co.il" target="_blank">300.co.il</a>
-                <a href="https://www.digwebinterface.com/?hostnames=liveshops.co.il%0Agadicpa.co.il%0A200.co.il%0A300.co.il&type=&useresolver=9.9.9.10&ns=auth" target="_blank">
-                    DIG All
+            <div class="card-header">
+                <span class="card-title"><i class="fa-solid fa-server"></i> System Health Portals</span>
+            </div>
+            <div class="btn-grid full">
+                <a href="https://livedns-health.al-0e2.workers.dev/" target="_blank" class="link-btn btn-primary-action">
+                    <span><i class="fa-solid fa-bolt"></i> Cloudflare Workers & Pages</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+                <a href="https://lvadm.nudnov.net/" target="_blank" class="link-btn">
+                    <span><i class="fa-solid fa-house-laptop"></i> O-homepage Portal</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
                 </a>
             </div>
         </div>
 
         <div class="card">
-            <div class="card-title">dig.ping.pe Authoritative NS</div>
-            <div class="buttons">
-                <a href="https://dig.ping.pe/200.co.il:A:park1.livedns.co.il" target="_blank">park1.livedns</a>
-                <a href="https://dig.ping.pe/200.co.il:A:park2.livedns.co.il" target="_blank">park2.livedns</a>
-                <a href="https://dig.ping.pe/300.co.il:A:linux1.livedns.co.il" target="_blank">linux1.livedns</a>
-                <a href="https://dig.ping.pe/300.co.il:A:linux2.livedns.co.il" target="_blank">linux2.livedns</a>
-                <a href="https://dig.ping.pe/liveshops.co.il:A:ns1.livedns.co.il" target="_blank">ns1.livedns</a>
-                <a href="https://dig.ping.pe/liveshops.co.il:A:ns2.livedns.co.il" target="_blank">ns2.livedns</a>
-                <a href="https://dig.ping.pe/gadicpa.co.il:A:ns1.livepress.co.il" target="_blank">ns1.livepress</a>
-                <a href="https://dig.ping.pe/gadicpa.co.il:A:ns2.livepress.co.il" target="_blank">ns2.livepress</a>
+            <div class="card-header">
+                <span class="card-title"><i class="fa-solid fa-magnifying-glass-location"></i> General DNS Diagnostics</span>
+            </div>
+            <div class="btn-grid">
+                <a href="https://intodns.com" target="_blank" class="link-btn"><span>IntoDNS</span><i class="fa-solid fa-chevron-right"></i></a>
+                <a href="https://ping.pe/" target="_blank" class="link-btn"><span>Ping.pe</span><i class="fa-solid fa-chevron-right"></i></a>
+                <a href="https://dnstools.ws/" target="_blank" class="link-btn"><span>DNSTools</span><i class="fa-solid fa-chevron-right"></i></a>
+                <a href="https://dnsdumpster.com/" target="_blank" class="link-btn"><span>DNSDumpster</span><i class="fa-solid fa-chevron-right"></i></a>
+                <a href="https://www.digwebinterface.com/" target="_blank" class="link-btn"><span>Dig Web</span><i class="fa-solid fa-chevron-right"></i></a>
+                <a href="https://www.nslookup.io/" target="_blank" class="link-btn"><span>NSLookup.io</span><i class="fa-solid fa-chevron-right"></i></a>
+                <a href="https://traceroute-online.com/" target="_blank" class="link-btn"><span>Traceroute</span><i class="fa-solid fa-chevron-right"></i></a>
+                <a href="https://digtrace.net/traceroute" target="_blank" class="link-btn"><span>DigTrace</span><i class="fa-solid fa-chevron-right"></i></a>
             </div>
         </div>
 
         <div class="card">
-            <div class="card-title">DNSChecker</div>
-            <div class="buttons">
-                <a href="https://dnschecker.org/#NS/200.co.il" target="_blank">200.co.il</a>
-                <a href="https://dnschecker.org/#NS/300.co.il" target="_blank">300.co.il</a>
-                <a href="https://dnschecker.org/#NS/gadicpa.co.il" target="_blank">gadicpa.co.il</a>
-                <a href="https://dnschecker.org/#NS/liveshops.co.il" target="_blank">liveshops.co.il</a>
+            <div class="card-header">
+                <span class="card-title"><i class="fa-solid fa-globe"></i> NSLookup.io — Tracked Domains</span>
+            </div>
+            <div class="btn-grid">
+                <a href="https://www.nslookup.io/domains/liveshops.co.il/dns-records/#authoritative" target="_blank" class="link-btn"><span>liveshops.co.il</span><i class="fa-solid fa-arrow-right"></i></a>
+                <a href="https://www.nslookup.io/domains/gadicpa.co.il/dns-records/" target="_blank" class="link-btn"><span>gadicpa.co.il</span><i class="fa-solid fa-arrow-right"></i></a>
+                <a href="https://www.nslookup.io/domains/200.co.il/dns-records/#google" target="_blank" class="link-btn"><span>200.co.il</span><i class="fa-solid fa-arrow-right"></i></a>
+                <a href="https://www.nslookup.io/domains/300.co.il/dns-records/" target="_blank" class="link-btn"><span>300.co.il</span><i class="fa-solid fa-arrow-right"></i></a>
+                <a href="https://www.nslookup.io/domains/livejob.co.il/dns-records/#authoritative" target="_blank" class="link-btn"><span>livejob.co.il</span><i class="fa-solid fa-arrow-right"></i></a>
+                <a href="https://www.nslookup.io/domains/livedist.co.il/dns-records/" target="_blank" class="link-btn"><span>livedist.co.il</span><i class="fa-solid fa-arrow-right"></i></a>
             </div>
         </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fa-solid fa-file-code"></i> IntoDNS & Multi-DIG</span>
+            </div>
+            <div class="btn-grid">
+                <a href="https://intodns.com/liveshops.co.il" target="_blank" class="link-btn"><span>liveshops.co.il</span><i class="fa-solid fa-circle-info"></i></a>
+                <a href="https://intodns.com/gadicpa.co.il" target="_blank" class="link-btn"><span>gadicpa.co.il</span><i class="fa-solid fa-circle-info"></i></a>
+                <a href="https://intodns.com/200.co.il" target="_blank" class="link-btn"><span>200.co.il</span><i class="fa-solid fa-circle-info"></i></a>
+                <a href="https://intodns.com/300.co.il" target="_blank" class="link-btn"><span>300.co.il</span><i class="fa-solid fa-circle-info"></i></a>
+            </div>
+            <div style="margin-top: 6px;">
+                <a href="https://www.digwebinterface.com/?hostnames=liveshops.co.il%0Agadicpa.co.il%0A200.co.il%0A300.co.il&type=&useresolver=9.9.9.10&ns=auth" target="_blank" class="link-btn btn-primary-action" style="justify-content: center; gap: 8px;">
+                    <i class="fa-solid fa-terminal"></i> DIG All Core Domains
+                </a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fa-solid fa-network-wired"></i> dig.ping.pe - Query A record</span>
+            </div>
+            <div class="btn-grid">
+                <a href="https://dig.ping.pe/200.co.il:A:park1.livedns.co.il" target="_blank" class="link-btn"><span>park1.livedns</span><i class="fa-solid fa-microchip"></i></a>
+                <a href="https://dig.ping.pe/200.co.il:A:park2.livedns.co.il" target="_blank" class="link-btn"><span>park2.livedns</span><i class="fa-solid fa-microchip"></i></a>
+                <a href="https://dig.ping.pe/300.co.il:A:linux1.livedns.co.il" target="_blank" class="link-btn"><span>linux1.livedns</span><i class="fa-solid fa-microchip"></i></a>
+                <a href="https://dig.ping.pe/300.co.il:A:linux2.livedns.co.il" target="_blank" class="link-btn"><span>linux2.livedns</span><i class="fa-solid fa-microchip"></i></a>
+                <a href="https://dig.ping.pe/liveshops.co.il:A:ns1.livedns.co.il" target="_blank" class="link-btn"><span>ns1.livedns</span><i class="fa-solid fa-microchip"></i></a>
+                <a href="https://dig.ping.pe/liveshops.co.il:A:ns2.livedns.co.il" target="_blank" class="link-btn"><span>ns2.livedns</span><i class="fa-solid fa-microchip"></i></a>
+                <a href="https://dig.ping.pe/gadicpa.co.il:A:ns1.livepress.co.il" target="_blank" class="link-btn"><span>ns1.livepress</span><i class="fa-solid fa-microchip"></i></a>
+                <a href="https://dig.ping.pe/gadicpa.co.il:A:ns2.livepress.co.il" target="_blank" class="link-btn"><span>ns2.livepress</span><i class="fa-solid fa-microchip"></i></a>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fa-solid fa-earth-americas"></i> Global DNS Propagation Checker</span>
+            </div>
+            <div class="btn-grid">
+                <a href="https://dnschecker.org/#NS/200.co.il" target="_blank" class="link-btn"><span>200.co.il</span><i class="fa-solid fa-satellite-dish"></i></a>
+                <a href="https://dnschecker.org/#NS/300.co.il" target="_blank" class="link-btn"><span>300.co.il</span><i class="fa-solid fa-satellite-dish"></i></a>
+                <a href="https://dnschecker.org/#NS/gadicpa.co.il" target="_blank" class="link-btn"><span>gadicpa.co.il</span><i class="fa-solid fa-satellite-dish"></i></a>
+                <a href="https://dnschecker.org/#NS/liveshops.co.il" target="_blank" class="link-btn"><span>liveshops.co.il</span><i class="fa-solid fa-satellite-dish"></i></a>
+            </div>
+        </div>
+
     </div>
 
-    <div id="monitoring" class="section">
-        <div class="card">
-            <div class="card-title">Uptime Kuma</div>
-            <div class="buttons full">
-                <a href="http://uptime-kuma-oracle.lvdns.com:3001/dashboard" target="_blank">Oracle</a>
-                <a href="http://uptime-kuma.lvdns.com:3001/dashboard" target="_blank">BE8</a>
-                <a href="http://kuma84.lvdns.com:3001/dashboard" target="_blank">84</a>
-            </div>
-        </div>
+    <!-- ==========================================================================
+         TAB 2: MONITORING & NOC
+         ========================================================================== -->
+    <div id="monitoring" class="section-content">
         
-        <div class="card">            
-            <div class="card-title">ZABBIX</div>
-            <div class="buttons full">
-                <a href="https://s5-office.nudnov.net/" target="_blank">S5</a>
-                <a href="https://zabbix6.nudnov.net/zabbix" target="_blank">ZABBIX6</a>
-            </div>            
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fa-solid fa-heart-pulse"></i> Uptime Kuma Instances</span>
+            </div>
+            <div class="btn-grid full">
+                <a href="http://uptime-kuma-oracle.lvdns.com:3001/dashboard" target="_blank" class="link-btn btn-primary-action">
+                    <span><i class="fa-solid fa-cloud"></i> Oracle Cloud Instance</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+                <a href="http://uptime-kuma.lvdns.com:3001/dashboard" target="_blank" class="link-btn">
+                    <span><i class="fa-solid fa-server"></i> BE8 Instance</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+                <a href="http://kuma84.lvdns.com:3001/dashboard" target="_blank" class="link-btn">
+                    <span><i class="fa-solid fa-hard-drive"></i> Node 84 Instance</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+            </div>
         </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fa-solid fa-desktop"></i> Zabbix Enterprise Monitoring</span>
+            </div>
+            <div class="btn-grid full">
+                <a href="https://s5-office.nudnov.net/" target="_blank" class="link-btn">
+                    <span><i class="fa-solid fa-building"></i> S5 Office Zabbix</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+                <a href="https://zabbix6.nudnov.net/zabbix" target="_blank" class="link-btn">
+                    <span><i class="fa-solid fa-shield-halved"></i> Zabbix 6 Cluster</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+            </div>
+        </div>
+
     </div>
 
-    <div id="tools" class="section">
+    <!-- ==========================================================================
+         TAB 3: NET TOOLS & SUBNET CALCULATOR
+         ========================================================================== -->
+    <div id="tools" class="section-content">
+        
+        <!-- Multi Security Lookup -->
         <div class="card">
-            <div class="card-title">AbuseIPDB Check</div>
-            <form onsubmit="checkAbuseIP(event)" class="search-box">
-                <input type="text" id="abuseIpInput" placeholder="Enter IP address..." required>
-                <button type="submit" class="btn-search">Check</button>
+            <div class="card-header">
+                <span class="card-title"><i class="fa-solid fa-shield-virus"></i> IP & Host Security Lookup</span>
+            </div>
+            <form onsubmit="executeSecurityLookup(event)" class="search-form">
+                <input type="text" id="targetIpInput" placeholder="Enter IP or Domain (e.g. 8.8.8.8)..." required>
+                <button type="submit" class="btn-abuse"><i class="fa-solid fa-magnifying-glass"></i> Check</button>
             </form>
-        </div>
-
-        <div class="card">
-            <div class="card-title">Network Tools</div>
-            <div class="buttons">
-                <a href="https://check-host.net/" target="_blank">Check-Host</a>
-                <a href="https://ping.pe/" target="_blank">Ping</a>
-                <a href="https://traceroute-online.com/" target="_blank">Traceroute</a>
-                <a href="https://digtrace.net/http-curl" target="_blank">HTTP Curl</a>
+            <div class="btn-grid" style="margin-top: 4px;">
+                <label style="font-size: 11px; color: var(--text-dim); display: flex; align-items: center; gap: 4px;">
+                    <input type="radio" name="secEngine" value="abuseipdb" checked> AbuseIPDB
+                </label>
+                <label style="font-size: 11px; color: var(--text-dim); display: flex; align-items: center; gap: 4px;">
+                    <input type="radio" name="secEngine" value="shodan"> Shodan
+                </label>
+                <label style="font-size: 11px; color: var(--text-dim); display: flex; align-items: center; gap: 4px;">
+                    <input type="radio" name="secEngine" value="virustotal"> VirusTotal
+                </label>
             </div>
         </div>
+
+        <!-- IP Subnet Calculator -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fa-solid fa-calculator"></i> IP / CIDR Subnet Calculator</span>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="cidrInput" class="tool-input" value="192.168.1.0/24" placeholder="CIDR (e.g. 10.0.0.0/22)" oninput="calcSubnet()">
+            </div>
+            <div class="subnet-tool-grid">
+                <div class="subnet-res-item">
+                    <div class="subnet-res-label">Network ID</div>
+                    <div class="subnet-res-val" id="resNetId">192.168.1.0</div>
+                </div>
+                <div class="subnet-res-item">
+                    <div class="subnet-res-label">Netmask</div>
+                    <div class="subnet-res-val" id="resMask">255.255.255.0</div>
+                </div>
+                <div class="subnet-res-item">
+                    <div class="subnet-res-label">First Usable Host</div>
+                    <div class="subnet-res-val" id="resFirstIp">192.168.1.1</div>
+                </div>
+                <div class="subnet-res-item">
+                    <div class="subnet-res-label">Last Usable Host</div>
+                    <div class="subnet-res-val" id="resLastIp">192.168.1.254</div>
+                </div>
+                <div class="subnet-res-item">
+                    <div class="subnet-res-label">Broadcast Address</div>
+                    <div class="subnet-res-val" id="resBcast">192.168.1.255</div>
+                </div>
+                <div class="subnet-res-item">
+                    <div class="subnet-res-label">Total Hosts</div>
+                    <div class="subnet-res-val" id="resHosts">254</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick CLI Generator -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fa-solid fa-terminal"></i> Quick Command Generator</span>
+            </div>
+            <input type="text" id="cliTarget" class="tool-input" value="example.com" placeholder="Target domain or IP..." oninput="updateCliCommands()">
+            
+            <div class="cli-box">
+                <span id="cliDigCmd">dig +short example.com A</span>
+                <button class="copy-btn" onclick="copyCli('cliDigCmd')"><i class="fa-regular fa-copy"></i> Copy</button>
+            </div>
+            <div class="cli-box">
+                <span id="cliMtrCmd">mtr -rw example.com</span>
+                <button class="copy-btn" onclick="copyCli('cliMtrCmd')"><i class="fa-regular fa-copy"></i> Copy</button>
+            </div>
+        </div>
+
+        <!-- External Diagnostic Services -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fa-solid fa-wrench"></i> Network Diagnostic Platforms</span>
+            </div>
+            <div class="btn-grid">
+                <a href="https://check-host.net/" target="_blank" class="link-btn"><span>Check-Host.net</span><i class="fa-solid fa-up-right-from-square"></i></a>
+                <a href="https://ping.pe/" target="_blank" class="link-btn"><span>Ping.pe</span><i class="fa-solid fa-up-right-from-square"></i></a>
+                <a href="https://traceroute-online.com/" target="_blank" class="link-btn"><span>Traceroute</span><i class="fa-solid fa-up-right-from-square"></i></a>
+                <a href="https://digtrace.net/http-curl" target="_blank" class="link-btn"><span>HTTP Curl</span><i class="fa-solid fa-up-right-from-square"></i></a>
+            </div>
+        </div>
+
     </div>
 
-    <div id="software" class="section">
+    <!-- ==========================================================================
+         TAB 4: REPOSITORY & SOFTWARE
+         ========================================================================== -->
+    <div id="software" class="section-content">
+        
         <div class="card">
-            <div class="card-title">Remote Access</div>
-            <div class="buttons">
-                <a href="https://anydesk.com/en/downloads/thank-you?dv=win_exe" target="_blank">AnyDesk</a>
-                <a href="#" target="_blank">RustDesk</a>
-                <a href="#" target="_blank">TeamViewer</a>
-                <a href="#" target="_blank">Chrome Remote</a>
+            <div class="card-header">
+                <span class="card-title"><i class="fa-solid fa-display"></i> Remote Desktop & Control</span>
+            </div>
+            <div class="btn-grid">
+                <a href="https://anydesk.com/en/downloads/thank-you?dv=win_exe" target="_blank" class="link-btn"><span>AnyDesk</span><i class="fa-solid fa-download"></i></a>
+                <a href="https://rustdesk.com/" target="_blank" class="link-btn"><span>RustDesk</span><i class="fa-solid fa-download"></i></a>
+                <a href="https://www.teamviewer.com/" target="_blank" class="link-btn"><span>TeamViewer</span><i class="fa-solid fa-download"></i></a>
+                <a href="https://remotedesktop.google.com/" target="_blank" class="link-btn"><span>Chrome Remote</span><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
             </div>
         </div>
 
         <div class="card">
-            <div class="card-title">OneDrive Repository</div>
-            <div class="buttons full">
-                <a href="ССЫЛКА_НА_ПАПКУ" target="_blank" class="btn-folder">📂 Open Full Repository</a>
+            <div class="card-header">
+                <span class="card-title"><i class="fa-solid fa-folder-open"></i> Corporate Repository & Installers</span>
             </div>
-            <div class="buttons" style="margin-top: 10px;">
-                <a href="https://lvdns-my.sharepoint.com/:u:/g/personal/aleksei_livedns_co_il/IQA0EzFjaw1oRbyfeGBusPIZAYn_nVsPHhCdss8zbJp6lzM?e=mEAsbh" target="_blank">ESET-PC</a>
-                <a href="https://lvdns-my.sharepoint.com/:u:/g/personal/aleksei_livedns_co_il/IQAPXnZ0MQXaToAIb_reJ8jQAazqf6JV_E3ks54zKWqJ86o?e=JopeQN" target="_blank">AcronisCyberProtect_Agent</a>
-                <a href="https://drive.google.com/file/d/1pInkIRuRzKcXLoaIGqd9namimWdUUzkm/view" target="_blank">VPN Client</a>
-                <a href="#" target="_blank">Duo Mobile</a>
+            <div class="btn-grid full">
+                <a href="https://lvdns-my.sharepoint.com/" target="_blank" class="link-btn btn-sharepoint" style="justify-content: center; gap: 8px;">
+                    <i class="fa-solid fa-cloud"></i> Open Full SharePoint Repository
+                </a>
+            </div>
+            <div class="btn-grid" style="margin-top: 10px;">
+                <a href="https://lvdns-my.sharepoint.com/:u:/g/personal/aleksei_livedns_co_il/IQA0EzFjaw1oRbyfeGBusPIZAYn_nVsPHhCdss8zbJp6lzM?e=mEAsbh" target="_blank" class="link-btn"><span>ESET Antivirus PC</span><i class="fa-solid fa-shield-halved"></i></a>
+                <a href="https://lvdns-my.sharepoint.com/:u:/g/personal/aleksei_livedns_co_il/IQAPXnZ0MQXaToAIb_reJ8jQAazqf6JV_E3ks54zKWqJ86o?e=JopeQN" target="_blank" class="link-btn"><span>Acronis Agent</span><i class="fa-solid fa-database"></i></a>
+                <a href="https://drive.google.com/file/d/1pInkIRuRzKcXLoaIGqd9namimWdUUzkm/view" target="_blank" class="link-btn"><span>VPN Client</span><i class="fa-solid fa-lock"></i></a>
+                <a href="https://duo.com/" target="_blank" class="link-btn"><span>Duo Mobile 2FA</span><i class="fa-solid fa-key"></i></a>
             </div>
         </div>
+
     </div>
 
-    <div class="footer">AL Nudnov • Netlify • Cloudflare • GitHub</div>
+    <!-- ==========================================================================
+         FOOTER
+         ========================================================================== -->
+    <footer>
+        <div>
+            <strong>AL SysOps Console</strong> &bull; Maintainer: A.Nudnov
+        </div>
+        <div class="footer-tags">
+            <span>Cloudflare Workers</span>
+            <span>Netlify</span>
+            <span>GitHub Pages</span>
+            <span>PWA Enabled</span>
+        </div>
+    </footer>
+
 </div>
 
+<!-- ==========================================================================
+     JAVASCRIPT LOGIC
+     ========================================================================== -->
 <script>
-function showTab(id, el) {
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
+/* Tab Navigation */
+function switchTab(tabId, el) {
+    document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
+    document.getElementById(tabId).classList.add('active');
     el.classList.add('active');
 }
 
-/* AbuseIPDB Check Function */
-function checkAbuseIP(event) {
-    event.preventDefault();
-    const ip = document.getElementById('abuseIpInput').value.trim();
-    if (ip) {
-        window.open(`https://www.abuseipdb.com/check/${ip}`, '_blank');
-    }
+/* Quick Links Filter */
+function filterLinks() {
+    const query = document.getElementById('linkSearch').value.toLowerCase();
+    const activeSection = document.querySelector('.section-content.active');
+    if (!activeSection) return;
+
+    const cards = activeSection.querySelectorAll('.card');
+    cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        if (text.includes(query)) {
+            card.style.display = 'flex';
+        } else {
+            card.style.display = 'none';
+        }
+    });
 }
 
-/* IP */
-fetch('https://api.ipify.org?format=json')
-    .then(r => r.json())
-    .then(d => ipAddress.textContent = d.ip)
-    .catch(() => ipAddress.textContent = 'Unavailable');
-
-/* TIME */
-function updateTime() {
-    dateTime.textContent = new Date().toLocaleString();
+/* Live Clock */
+function updateClock() {
+    const now = new Date();
+    document.getElementById('clockTime').textContent = now.toLocaleTimeString();
+    document.getElementById('clockDate').textContent = now.toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
 }
-updateTime();
-setInterval(updateTime, 1000);
+setInterval(updateClock, 1000);
+updateClock();
 
-/* HEALTH */
+/* Fetch Client Public IP & Geolocation info */
+fetch('https://ipapi.co/json/')
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById('clientIp').textContent = data.ip || 'Unavailable';
+        const geoText = [data.city, data.country_name, data.org].filter(Boolean).join(' • ');
+        document.getElementById('clientGeo').textContent = geoText || 'Location details unavailable';
+    })
+    .catch(() => {
+        // Fallback if ipapi.co fails or rate limits
+        fetch('https://api.ipify.org?format=json')
+            .then(r => r.json())
+            .then(d => {
+                document.getElementById('clientIp').textContent = d.ip;
+                document.getElementById('clientGeo').textContent = 'Public IP (Geo offline)';
+            })
+            .catch(() => {
+                document.getElementById('clientIp').textContent = 'Unavailable';
+                document.getElementById('clientGeo').textContent = 'Network offline or blocked';
+            });
+    });
+
+/* Worker System Health Monitoring Check */
 const HEALTH_API = 'https://livedns-health.al-0e2.workers.dev/';
-
 fetch(HEALTH_API)
     .then(r => r.json())
     .then(d => {
-        const el = document.getElementById('healthBadge');
-        el.classList.remove('loading');
+        const badge = document.getElementById('healthBadge');
+        badge.className = 'stat-badge';
         if (d.status === 'ok') {
-            el.classList.add('ok');
-            el.textContent = '🟢 All Systems Operational';
+            badge.classList.add('badge-ok');
+            badge.innerHTML = '<span class="pulse-dot"></span> 🟢 Systems Operational';
         } else if (d.status === 'warning') {
-            el.classList.add('warning');
-            el.textContent = '🟠 Partial Degradation';
+            badge.classList.add('badge-warning');
+            badge.innerHTML = '<span class="pulse-dot"></span> 🟠 Partial Degradation';
         } else {
-            el.classList.add('error');
-            el.textContent = '🔴 Service Disruption';
+            badge.classList.add('badge-error');
+            badge.innerHTML = '<span class="pulse-dot"></span> 🔴 Service Disruption';
         }
     })
     .catch(() => {
-        const el = document.getElementById('healthBadge');
-        el.classList.remove('loading');
-        el.classList.add('error');
-        el.textContent = '🔴 Health API Unreachable';
+        const badge = document.getElementById('healthBadge');
+        badge.className = 'stat-badge badge-error';
+        badge.innerHTML = '🔴 Health API Unreachable';
     });
 
-/* PWA */
+/* Multi-Engine Security Search */
+function executeSecurityLookup(event) {
+    event.preventDefault();
+    const target = document.getElementById('targetIpInput').value.trim();
+    if (!target) return;
+
+    const engine = document.querySelector('input[name="secEngine"]:checked').value;
+    let url = '';
+
+    if (engine === 'abuseipdb') {
+        url = `https://www.abuseipdb.com/check/${encodeURIComponent(target)}`;
+    } else if (engine === 'shodan') {
+        url = `https://www.shodan.io/host/${encodeURIComponent(target)}`;
+    } else if (engine === 'virustotal') {
+        url = `https://www.virustotal.com/gui/search/${encodeURIComponent(target)}`;
+    }
+
+    if (url) window.open(url, '_blank');
+}
+
+/* IP CIDR Subnet Calculator Engine */
+function calcSubnet() {
+    const input = document.getElementById('cidrInput').value.trim();
+    const parts = input.split('/');
+    if (parts.length !== 2) return;
+
+    const ipStr = parts[0];
+    const cidr = parseInt(parts[1], 10);
+
+    if (isNaN(cidr) || cidr < 0 || cidr > 32) return;
+
+    const ipNums = ipStr.split('.').map(Number);
+    if (ipNums.length !== 4 || ipNums.some(n => isNaN(n) || n < 0 || n > 255)) return;
+
+    const ipInt = (ipNums[0] << 24) | (ipNums[1] << 16) | (ipNums[2] << 8) | ipNums[3];
+    const maskInt = cidr === 0 ? 0 : (~0 << (32 - cidr)) >>> 0;
+    const netInt = (ipInt & maskInt) >>> 0;
+    const bcastInt = (netInt | (~maskInt >>> 0)) >>> 0;
+
+    const intToIp = (num) => [
+        (num >>> 24) & 255,
+        (num >>> 16) & 255,
+        (num >>> 8) & 255,
+        num & 255
+    ].join('.');
+
+    document.getElementById('resNetId').textContent = intToIp(netInt);
+    document.getElementById('resMask').textContent = intToIp(maskInt);
+    document.getElementById('resBcast').textContent = intToIp(bcastInt);
+
+    if (cidr >= 31) {
+        document.getElementById('resFirstIp').textContent = intToIp(netInt);
+        document.getElementById('resLastIp').textContent = intToIp(bcastInt);
+        document.getElementById('resHosts').textContent = cidr === 32 ? '1' : '2';
+    } else {
+        document.getElementById('resFirstIp').textContent = intToIp(netInt + 1);
+        document.getElementById('resLastIp').textContent = intToIp(bcastInt - 1);
+        document.getElementById('resHosts').textContent = (Math.pow(2, 32 - cidr) - 2).toLocaleString();
+    }
+}
+// Init Subnet Calc
+calcSubnet();
+
+/* CLI Command Generator & Clipboard Copy */
+function updateCliCommands() {
+    const domain = document.getElementById('cliTarget').value.trim() || 'example.com';
+    document.getElementById('cliDigCmd').textContent = `dig +short ${domain} A`;
+    document.getElementById('cliMtrCmd').textContent = `mtr -rw ${domain}`;
+}
+
+function copyCli(elementId) {
+    const text = document.getElementById(elementId).textContent;
+    navigator.clipboard.writeText(text).then(() => {
+        const btn = event.currentTarget;
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+        setTimeout(() => btn.innerHTML = orig, 1500);
+    });
+}
+
+/* Service Worker PWA registration */
 if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js');
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
 }
 </script>
 </body>
