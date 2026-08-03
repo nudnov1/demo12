@@ -914,6 +914,92 @@ footer .footer-tags span {
             </div>
         </div>
 
+        <!-- Open Port & ping.pe Checker Quick Access -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fa-solid fa-plug"></i> Open Port & Ping.pe Checker</span>
+            </div>
+            <form onsubmit="checkPortExternal(event)" class="search-form">
+                <input type="text" id="portHostInput" placeholder="Host/IP (e.g. 8.8.8.8)..." required>
+                <input type="number" id="portNumInput" placeholder="Port" value="80" style="width: 80px; flex: none;" required>
+                <button type="submit" class="action-btn"><i class="fa-solid fa-bolt"></i> Check</button>
+            </form>
+            <div class="btn-grid" style="margin-top: 6px;">
+                <a href="https://tools.livedns.co.il/tool/open-port-checker" target="_blank" class="link-btn"><span>LiveDNS Port Check</span><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                <a href="https://tools.livedns.co.il/tool/user-agent-finder" target="_blank" class="link-btn"><span>User Agent / Headers</span><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+            </div>
+        </div>
+
+        <!-- Base64 & Encoder Tool -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fa-solid fa-code"></i> Quick Base64 & URL Encoder</span>
+            </div>
+            <textarea id="encoderInput" class="tool-input" rows="2" placeholder="Text to encode/decode..." style="resize: vertical; font-size: 12px;"></textarea>
+            <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                <button class="action-btn" onclick="processText('b64enc')">B64 Encode</button>
+                <button class="action-btn" onclick="processText('b64dec')">B64 Decode</button>
+                <button class="action-btn" onclick="processText('urlenc')">URL Encode</button>
+                <button class="action-btn" onclick="processText('urldec')">URL Decode</button>
+            </div>
+        </div>
+
+        <!-- Password & Secure Token Generator -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fa-solid fa-key"></i> Pass & Token Generator</span>
+            </div>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <input type="text" id="genPassOutput" class="tool-input" readonly placeholder="Generated Password...">
+                <button class="action-btn" onclick="generateSecurePass()"><i class="fa-solid fa-rotate"></i> Gen</button>
+                <button class="copy-btn" onclick="copyCli('genPassOutput')" style="padding: 10px 12px;"><i class="fa-regular fa-copy"></i></button>
+            </div>
+        </div>
+
+        <!-- MX Lookup & Email Security Inspector -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fa-solid fa-envelope-open-text"></i> MX Lookup & Email Security</span>
+            </div>
+            <form onsubmit="checkMxExternal(event)" class="search-form">
+                <input type="text" id="mxDomainInput" placeholder="Domain (e.g. livedns.co.il)..." required>
+                <button type="submit" class="btn-primary-action"><i class="fa-solid fa-magnifying-glass"></i> MX Check</button>
+            </form>
+            <div class="btn-grid" style="margin-top: 6px;">
+                <a href="https://tools.livedns.co.il/tool/mx-lookup" target="_blank" class="link-btn"><span>LiveDNS MX Lookup</span><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                <a href="https://mxtoolbox.com/" target="_blank" class="link-btn"><span>MXToolbox Suite</span><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                <a href="https://mxtoolbox.com/spf.aspx" target="_blank" class="link-btn"><span>SPF Validator</span><i class="fa-solid fa-shield-cat"></i></a>
+                <a href="https://mxtoolbox.com/dmarc.aspx" target="_blank" class="link-btn"><span>DMARC Inspector</span><i class="fa-solid fa-shield-halved"></i></a>
+            </div>
+        </div>
+
+        <!-- IP & Hostname Reverse DNS Tool -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fa-solid fa-route"></i> Reverse DNS & IP Info</span>
+            </div>
+            <div class="btn-grid">
+                <a href="https://tools.livedns.co.il/tool/ip-to-hostname" target="_blank" class="link-btn"><span>IP to Hostname (PTR)</span><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                <a href="https://tools.livedns.co.il/tool/hostname-to-ip" target="_blank" class="link-btn"><span>Hostname to IP</span><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                <a href="https://tools.livedns.co.il/tool/ip-information" target="_blank" class="link-btn"><span>IP Deep Info</span><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                <a href="https://tools.livedns.co.il/tool/dns-lookup" target="_blank" class="link-btn"><span>LiveDNS Client</span><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+            </div>
+        </div>
+
+        <!-- IDN Punycode Converter -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fa-solid fa-language"></i> IDN Punycode Converter</span>
+            </div>
+            <div style="display: flex; gap: 8px;">
+                <input type="text" id="punyInput" class="tool-input" placeholder="e.g. דומיין.ישראל or xn--..." oninput="convertPunycode()">
+            </div>
+            <div class="cli-box">
+                <span id="punyResult">Converted domain output...</span>
+                <button class="copy-btn" onclick="copyCli('punyResult')"><i class="fa-regular fa-copy"></i> Copy</button>
+            </div>
+        </div>
+
     </div>
 
     <!-- ==========================================================================
@@ -1123,8 +1209,75 @@ function updateCliCommands() {
     document.getElementById('cliMtrCmd').textContent = `mtr -rw ${domain}`;
 }
 
+/* Open Port External Check via ping.pe */
+function checkPortExternal(e) {
+    e.preventDefault();
+    const host = document.getElementById('portHostInput').value.trim();
+    const port = document.getElementById('portNumInput').value.trim();
+    if (host && port) {
+        window.open(`https://ping.pe/${encodeURIComponent(host)}:${encodeURIComponent(port)}`, '_blank');
+    }
+}
+
+/* MX Lookup External Check */
+function checkMxExternal(e) {
+    e.preventDefault();
+    const domain = document.getElementById('mxDomainInput').value.trim();
+    if (domain) {
+        window.open(`https://mxtoolbox.com/SuperTool.aspx?action=mx%3a${encodeURIComponent(domain)}`, '_blank');
+    }
+}
+
+/* Base64 & URL Processing */
+function processText(mode) {
+    const input = document.getElementById('encoderInput');
+    let val = input.value;
+    try {
+        if (mode === 'b64enc') input.value = btoa(unescape(encodeURIComponent(val)));
+        else if (mode === 'b64dec') input.value = decodeURIComponent(escape(atob(val)));
+        else if (mode === 'urlenc') input.value = encodeURIComponent(val);
+        else if (mode === 'urldec') input.value = decodeURIComponent(val);
+    } catch (err) {
+        alert('Invalid input for selected operation');
+    }
+}
+
+/* Password & Token Generator */
+function generateSecurePass() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+~';
+    let pass = '';
+    const array = new Uint32Array(16);
+    window.crypto.getRandomValues(array);
+    for (let i = 0; i < 16; i++) {
+        pass += chars[array[i] % chars.length];
+    }
+    document.getElementById('genPassOutput').value = pass;
+}
+generateSecurePass();
+
+/* IDN Punycode Quick Helper */
+function convertPunycode() {
+    const val = document.getElementById('punyInput').value.trim();
+    const res = document.getElementById('punyResult');
+    if (!val) {
+        res.textContent = 'Converted domain output...';
+        return;
+    }
+    try {
+        if (val.startsWith('xn--') || val.includes('.xn--')) {
+            res.textContent = new URL('http://' + val).hostname;
+        } else {
+            const url = new URL('http://' + val);
+            res.textContent = url.hostname;
+        }
+    } catch (e) {
+        res.textContent = val;
+    }
+}
+
 function copyCli(elementId) {
-    const text = document.getElementById(elementId).textContent;
+    const el = document.getElementById(elementId);
+    const text = el.value || el.textContent;
     navigator.clipboard.writeText(text).then(() => {
         const btn = event.currentTarget;
         const orig = btn.innerHTML;
