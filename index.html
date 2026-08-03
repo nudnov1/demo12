@@ -549,15 +549,58 @@ footer .footer-tags span {
     font-size: 11px;
 }
 
-/* Responsive adjust */
+/* Responsive adjust for Mobile */
 @media (max-width: 768px) {
     body { padding: 12px; }
-    header { flex-direction: column; align-items: flex-start; gap: 12px; }
-    .header-status { width: 100%; justify-content: space-between; }
-    .controls-bar { flex-direction: column; align-items: stretch; }
-    .tabs-nav { overflow-x: auto; }
-    .section-content.active { grid-template-columns: 1fr; }
-    footer { flex-direction: column; text-align: center; }
+    
+    header { 
+        flex-direction: column; 
+        align-items: flex-start; 
+        gap: 12px; 
+    }
+    
+    .header-status { 
+        width: 100%; 
+        justify-content: flex-start; 
+    }
+    
+    .live-time { 
+        text-align: left; 
+    }
+    
+    .controls-bar { 
+        flex-direction: column; 
+        align-items: stretch; 
+    }
+    
+    .tabs-nav { 
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        width: 100%;
+    }
+
+    .tab-btn {
+        justify-content: center;
+        text-align: center;
+        flex-direction: column;
+        padding: 10px 8px;
+        font-size: 12px;
+        gap: 4px;
+    }
+
+    .tab-btn i {
+        font-size: 16px;
+    }
+    
+    .section-content.active { 
+        grid-template-columns: 1fr; 
+    }
+    
+    footer { 
+        flex-direction: column; 
+        text-align: center; 
+    }
 }
 </style>
 </head>
