@@ -597,10 +597,54 @@ footer .footer-tags span {
         grid-template-columns: 1fr; 
     }
     
-    footer { 
-        flex-direction: column; 
-        text-align: center; 
-    }
+/* Auth Modal Styling */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(9, 13, 22, 0.96);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-box {
+    background: var(--card-bg);
+    border: 1px solid var(--accent-cyan);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    width: 90%;
+    max-width: 360px;
+    box-shadow: 0 0 30px var(--glow-cyan);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+}
+
+.modal-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent-cyan);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.modal-error {
+    color: var(--accent-rose);
+    font-size: 12px;
+    display: none;
 }
 </style>
 </head>
@@ -779,43 +823,61 @@ footer .footer-tags span {
     </div>
 
     <!-- ==========================================================================
-         TAB 2: MONITORING & NOC
+         TAB 2: MONITORING & NOC (PASSWORD PROTECTED)
          ========================================================================== -->
     <div id="monitoring" class="section-content">
         
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title"><i class="fa-solid fa-heart-pulse"></i> Uptime Kuma Instances</span>
+        <!-- Inline Auth Screen (Shows if not authenticated) -->
+        <div id="monitoringAuthBox" class="card" style="grid-column: 1 / -1; max-width: 420px; margin: 20px auto; text-align: center;">
+            <div class="card-header" style="justify-content: center;">
+                <span class="card-title"><i class="fa-solid fa-lock"></i> Protected Area Access</span>
             </div>
-            <div class="btn-grid full">
-                <a href="http://uptime-kuma-oracle.lvdns.com:3001/dashboard" target="_blank" class="link-btn btn-primary-action">
-                    <span><i class="fa-solid fa-cloud"></i> Oracle Cloud Instance</span>
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                </a>
-                <a href="http://uptime-kuma.lvdns.com:3001/dashboard" target="_blank" class="link-btn">
-                    <span><i class="fa-solid fa-server"></i> BE8 Instance</span>
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                </a>
-                <a href="http://kuma84.lvdns.com:3001/dashboard" target="_blank" class="link-btn">
-                    <span><i class="fa-solid fa-hard-drive"></i> Node 84 Instance</span>
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                </a>
-            </div>
+            <p style="font-size: 13px; color: var(--text-muted); margin-top: 6px;">Enter password to unlock Monitoring & NOC links</p>
+            <form onsubmit="verifyPassword(event)" style="display: flex; flex-direction: column; gap: 12px; margin-top: 10px;">
+                <input type="password" id="authPassInput" class="tool-input" placeholder="Enter Password..." required style="text-align: center;">
+                <div id="authError" class="modal-error" style="color: var(--accent-rose); font-size: 12px; display: none;">
+                    <i class="fa-solid fa-triangle-exclamation"></i> Incorrect Password!
+                </div>
+                <button type="submit" class="action-btn btn-primary-action" style="padding: 10px; justify-content: center;"><i class="fa-solid fa-key"></i> Unlock Section</button>
+            </form>
         </div>
 
-        <div class="card">
-            <div class="card-header">
-                <span class="card-title"><i class="fa-solid fa-desktop"></i> Zabbix Enterprise Monitoring</span>
+        <!-- Protected Monitoring Cards (Hidden until unlocked) -->
+        <div id="monitoringContent" style="display: none; contents: inherit;" class="protected-content-wrapper">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title"><i class="fa-solid fa-heart-pulse"></i> Uptime Kuma Instances</span>
+                </div>
+                <div class="btn-grid full">
+                    <a href="http://uptime-kuma-oracle.lvdns.com:3001/dashboard" target="_blank" class="link-btn btn-primary-action">
+                        <span><i class="fa-solid fa-cloud"></i> Oracle Cloud Instance</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+                    <a href="http://uptime-kuma.lvdns.com:3001/dashboard" target="_blank" class="link-btn">
+                        <span><i class="fa-solid fa-server"></i> BE8 Instance</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+                    <a href="http://kuma84.lvdns.com:3001/dashboard" target="_blank" class="link-btn">
+                        <span><i class="fa-solid fa-hard-drive"></i> Node 84 Instance</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+                </div>
             </div>
-            <div class="btn-grid full">
-                <a href="https://s5-office.nudnov.net/" target="_blank" class="link-btn">
-                    <span><i class="fa-solid fa-building"></i> S5 Office Zabbix</span>
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                </a>
-                <a href="https://zabbix6.nudnov.net/zabbix" target="_blank" class="link-btn">
-                    <span><i class="fa-solid fa-shield-halved"></i> Zabbix 6 Cluster</span>
-                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
-                </a>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title"><i class="fa-solid fa-desktop"></i> Zabbix Enterprise Monitoring</span>
+                </div>
+                <div class="btn-grid full">
+                    <a href="https://s5-office.nudnov.net/" target="_blank" class="link-btn">
+                        <span><i class="fa-solid fa-building"></i> S5 Office Zabbix</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+                    <a href="https://zabbix6.nudnov.net/zabbix" target="_blank" class="link-btn">
+                        <span><i class="fa-solid fa-shield-halved"></i> Zabbix 6 Cluster</span>
+                        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                    </a>
+                </div>
             </div>
         </div>
 
@@ -1059,12 +1121,40 @@ footer .footer-tags span {
      JAVASCRIPT LOGIC
      ========================================================================== -->
 <script>
-/* Tab Navigation */
+/* Inline Password Protection for Monitoring Tab */
+function checkMonitoringAuth() {
+    if (sessionStorage.getItem('noc_authenticated') === 'true') {
+        document.getElementById('monitoringAuthBox').style.display = 'none';
+        document.getElementById('monitoringContent').style.display = 'contents';
+    } else {
+        document.getElementById('monitoringAuthBox').style.display = 'flex';
+        document.getElementById('monitoringContent').style.display = 'none';
+    }
+}
+
 function switchTab(tabId, el) {
     document.querySelectorAll('.section-content').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(t => t.classList.remove('active'));
     document.getElementById(tabId).classList.add('active');
     el.classList.add('active');
+
+    if (tabId === 'monitoring') {
+        checkMonitoringAuth();
+    }
+}
+
+function verifyPassword(e) {
+    e.preventDefault();
+    const inputPass = document.getElementById('authPassInput').value.trim();
+
+    if (inputPass === 'rouser9026') {
+        sessionStorage.setItem('noc_authenticated', 'true');
+        checkMonitoringAuth();
+    } else {
+        document.getElementById('authError').style.display = 'block';
+        document.getElementById('authPassInput').value = '';
+        document.getElementById('authPassInput').focus();
+    }
 }
 
 /* Quick Links Filter */
