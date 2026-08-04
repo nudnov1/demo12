@@ -731,15 +731,15 @@ footer .footer-tags span {
         
         <div class="card">
             <div class="card-header">
-                <span class="card-title"><i class="fa-solid fa-server"></i> System Health Portals</span>
+                <span class="card-title"><i class="fa-solid fa-server"></i> System Portals</span>
             </div>
             <div class="btn-grid full">
-                <a href="https://livedns-health.al-0e2.workers.dev/" target="_blank" class="link-btn btn-primary-action">
-                    <span><i class="fa-solid fa-bolt"></i> Cloudflare Workers & Pages</span>
+                <a href="https://xxxxxxxxxxxx/" target="_blank" class="link-btn btn-primary-action">
+                    <span><i class="fa-solid fa-bolt"></i> System Portals</span>
                     <i class="fa-solid fa-arrow-up-right-from-square"></i>
                 </a>
-                <a href="https://lvadm.nudnov.net/" target="_blank" class="link-btn">
-                    <span><i class="fa-solid fa-house-laptop"></i> O-homepage Portal</span>
+                <a href="https://xxxxxxxxxx/" target="_blank" class="link-btn">
+                    <span><i class="fa-solid fa-house-laptop"></i> System Portals</span>
                     <i class="fa-solid fa-arrow-up-right-from-square"></i>
                 </a>
             </div>
@@ -830,7 +830,7 @@ footer .footer-tags span {
         <!-- Inline Auth Screen (Shows if not authenticated) -->
         <div id="monitoringAuthBox" class="card" style="grid-column: 1 / -1; max-width: 420px; margin: 20px auto; text-align: center;">
             <div class="card-header" style="justify-content: center;">
-                <span class="card-title"><i class="fa-solid fa-lock"></i> Protected Area Access</span>
+                <span class="card-title"><i class="fa-solid fa-lock"></i> Protected Area AccessProtected Area Access</span>
             </div>
             <p style="font-size: 13px; color: var(--text-muted); margin-top: 6px;">Enter password to unlock Monitoring & NOC links</p>
             <form onsubmit="verifyPassword(event)" style="display: flex; flex-direction: column; gap: 12px; margin-top: 10px;">
@@ -863,6 +863,23 @@ footer .footer-tags span {
                     </a>
                 </div>
             </div>
+
+        <div class="card">
+            <div class="card-header">
+                <span class="card-title"><i class="fa-solid fa-server"></i> System Health Portals</span>
+            </div>
+            <div class="btn-grid full">
+                <a href="https://livedns-health.al-0e2.workers.dev/" target="_blank" class="link-btn btn-primary-action">
+                    <span><i class="fa-solid fa-bolt"></i> Cloudflare Workers & Pages</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+                <a href="https://lvadm.nudnov.net/" target="_blank" class="link-btn">
+                    <span><i class="fa-solid fa-house-laptop"></i> O-homepage Portal</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+            </div>
+        </div>
+
 
             <div class="card">
                 <div class="card-header">
@@ -1121,7 +1138,17 @@ footer .footer-tags span {
      JAVASCRIPT LOGIC
      ========================================================================== -->
 <script>
-/* Inline Password Protection for Monitoring Tab */
+/* Secure Password Protection (SHA-256 Hashed) */
+const PROTECTED_HASH = 'fa7fb7ee913aa2ec44e83c745cf540edaa8dfeb9e8bf2e99d98e72753a388fef';
+
+async function hashString(str) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(str);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
 function checkMonitoringAuth() {
     if (sessionStorage.getItem('noc_authenticated') === 'true') {
         document.getElementById('monitoringAuthBox').style.display = 'none';
@@ -1143,11 +1170,12 @@ function switchTab(tabId, el) {
     }
 }
 
-function verifyPassword(e) {
+async function verifyPassword(e) {
     e.preventDefault();
     const inputPass = document.getElementById('authPassInput').value.trim();
+    const inputHash = await hashString(inputPass);
 
-    if (inputPass === 'rouser9026') {
+    if (inputHash === PROTECTED_HASH) {
         sessionStorage.setItem('noc_authenticated', 'true');
         checkMonitoringAuth();
     } else {
